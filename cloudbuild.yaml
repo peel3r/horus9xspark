@@ -6,6 +6,8 @@
       id: 'Install Dependencies'
       args: ['install'] # Odpowiednik `npm install`
 
+
+
     # Krok 2: Zbuduj aplikację React do produkcji
     # Używamy tego samego obrazu npm do uruchomienia skryptu `build`
     - name: 'gcr.io/cloud-builders/npm'
@@ -32,4 +34,5 @@
     # Uwaga: W tym setupie nie potrzebujemy tokena Firebase, ponieważ konto serwisowe Cloud Build
     # (domyślnie: [PROJECT_NUMBER]@cloudbuild.gserviceaccount.com)
     # zostanie automatycznie uwierzytelnione, jeśli ma odpowiednie role w projekcie Firebase.
-    
+    options:
+      logging: CLOUD_LOGGING_ONLY
