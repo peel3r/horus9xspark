@@ -1,43 +1,460 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horus9xSpark: Neuro-Sonic Ecosystem</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font globally and ensure smooth scrolling for anchor links */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <!-- React and ReactDOM CDNs -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX transformation in browser (for development/preview only) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Core Library CDN (provides icon data) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+    <!-- Your React App component embedded directly -->
+    <script type="text/babel">
+        // Główny komponent aplikacji React dla dwujęzycznej strony docelowej "Horus9xSpark: Neuro-Sonic Ecosystem".
+        // Wprowadzono generator szybkich spostrzeżeń Neuro-Sonic z integracją Gemini API.
+        // Strona skupia się na ekosystemie, prezentując kluczowe komponenty.
+        // Wykorzystuje Tailwind CSS do stylizacji i lucide-react do ikon.
+
+        // Dostęp do React Hooks poprzez globalny obiekt React
+        const { useState, useEffect, forwardRef } = React;
+
+        // Funkcja pomocnicza do tworzenia komponentów ikon Lucide
+        // Ponieważ lucide-react.min.js nie działa poprawnie z Babel w przeglądarce,
+        // ręcznie tworzymy komponenty React z danych ikon z lucide.min.js.
+        const createLucideIconComponent = (iconName) => {
+            const iconData = lucide.icons[iconName];
+            if (!iconData) {
+                console.warn(`Icon "${iconName}" not found in Lucide data.`);
+                return () => null; // Zwróć pusty komponent, jeśli ikona nie istnieje
+            }
+
+            // Używamy React.forwardRef, aby umożliwić przekazywanie ref do elementu SVG
+            const IconComponent = forwardRef(({ color = "currentColor", size = 24, strokeWidth = 2, ...props }, ref) => {
+                return React.createElement(
+                    "svg",
+                    {
+                        xmlns: "http://www.w3.org/2000/svg",
+                        width: size,
+                        height: size,
+                        viewBox: "0 0 24 24",
+                        fill: "none",
+                        stroke: color,
+                        strokeWidth: strokeWidth,
+                        strokeLinecap: "round",
+                        strokeLinejoin: "round",
+                        ref: ref,
+                        ...props,
+                    },
+                    iconData.map((data, index) => {
+                        if (data[0] === "path") {
+                            return React.createElement("path", { key: index, d: data[1] });
+                        }
+                        if (data[0] === "circle") {
+                            return React.createElement("circle", { key: index, cx: data[1].cx, cy: data[1].cy, r: data[1].r });
+                        }
+                        // Dodaj inne elementy SVG, jeśli są potrzebne (np. rect, line, polyline)
+                        return null;
+                    })
+                );
+            });
+            IconComponent.displayName = `Lucide${iconName.charAt(0).toUpperCase() + iconName.slice(1)}`;
+            return IconComponent;
+        };
+
+        // Definicje ikon używanych w aplikacji
+        const Brain = createLucideIconComponent('brain');
+        const BookOpen = createLucideIconComponent('book-open');
+        const Users = createLucideIconComponent('users');
+        const TrendingUp = createLucideIconComponent('trending-up');
+        const Music = createLucideIconComponent('music');
+        const Sparkles = createLucideIconComponent('sparkles');
+        const Globe = createLucideIconComponent('globe');
+
+
+        // Obiekt tłumaczeń dla obu języków (polski/angielski)
+        const translations = {
+          en: {
+            headerBrand: "Horus9xSpark:",
+            headerSlogan: "Neuro-Sonic Ecosystem",
+            heroPrefix: "Unleash Your Inner ",
+            heroAbleOperator: "Able Operator",
+            heroSuffix: "",
+            heroParagraph: "Navigate complexity, cultivate antifragility, and achieve extreme clarity in an AI-augmented world. The Neuro-Sonic Ecosystem provides the tools and insights you need to thrive.",
+            exploreEcosystem: "Explore the Ecosystem",
+            ecosystemHeading: "The Neuro-Sonic Ecosystem: Your Path to Mastery",
+            navigatorCardTitle: "The Navigator",
+            navigatorCardText: "Your personal AI-powered lens for extreme clarity. Input your challenges, receive structured insights grounded in Neuro-Sonic principles.",
+            tryNavigator: "Try the Navigator",
+            substackCardTitle: "The Substack",
+            substackCardText: "Dive deep into the Neuro-Sonic methodology. Explore detailed articles, expand your understanding, and engage with a community of 'Able Operators'.",
+            exploreMethodology: "Explore the Methodology",
+            linkedinCardTitle: "LinkedIn",
+            linkedinCardText: "Connect with Pawel Jakubowski, engage in professional dialogues, and stay updated on the latest insights in AI, clarity, and antifragility.",
+            connectWithPawel: "Connect with Pawel",
+            tradingViewCardTitle: "TradingView",
+            tradingViewCardText: "The real-world laboratory for discerning 'unseen rhythms' in dynamic data environments. Apply Neuro-Sonic insights to complex, live scenarios.",
+            exploreTradingView: "Explore TradingView",
+            anjunaBeatsCardTitle: "Anjuna Beats Radio",
+            anjunaBeatsCardText: "Curate your optimal sonic environment. Leverage Auditory Morphodynamics to enhance focus, induce flow states, and sustain deep work.",
+            tuneIn: "Tune In",
+            quickInsightHeading: "✨ Get a Quick Neuro-Sonic Insight",
+            quickInsightParagraph: "Enter any problem or question, and our AI engine will provide you with an instant, focused Neuro-Sonic insight to help you gain clarity.",
+            insightPlaceholder: "E.g., 'How to overcome procrastination in complex projects?'",
+            generateInsight: "Generate Insight",
+            insightPromptError: "Please enter a query to generate an insight.",
+            insightGenerationFailed: "Insight generation failed: No data or unexpected structure.",
+            insightGenerationError: "Failed to generate insight: ",
+            yourNeuroSonicInsight: "Your Neuro-Sonic Insight:",
+            loading: "Loading...",
+            footerRights: "All rights reserved.",
+            footerPoweredBy: "Powered by the Neuro-Sonic Methodology",
+            apiPromptPrefix: "Apply Neuro-Sonic methodology to the following problem/question to provide a brief, actionable insight that aids clarity and antifragility. Focus on 'unseen rhythms' or 'clarity questions'. Problem: ",
+          },
+          pl: {
+            headerBrand: "Horus9xSpark:",
+            headerSlogan: "Ekosystem Neuro-Sonic",
+            heroPrefix: "Uwolnij swojego wewnętrznego ",
+            heroAbleOperator: "Zdolnego Operatora",
+            heroSuffix: "",
+            heroParagraph: "Nawiguj złożoność, rozwijaj antykruchość i osiągaj ekstremalną klarowność w świecie rozszerzonym przez AI. Ekosystem Neuro-Sonic dostarcza narzędzi i spostrzeżeń, których potrzebujesz, aby prosperować.",
+            exploreEcosystem: "Poznaj Ekosystem",
+            ecosystemHeading: "Ekosystem Neuro-Sonic: Twoja Droga do Mistrzostwa",
+            navigatorCardTitle: "Navigator",
+            navigatorCardText: "Twój osobisty obiektyw zasilany AI dla ekstremalnej klarowności. Wprowadź swoje wyzwania, otrzymuj ustrukturyzowane spostrzeżenia oparte na zasadach Neuro-Sonic.",
+            tryNavigator: "Wypróbuj Navigator",
+            substackCardTitle: "Substack",
+            substackCardText: "Zanurz się głęboko w metodologię Neuro-Sonic. Przeglądaj szczegółowe artykuły, poszerzaj swoją wiedzę i angażuj się w społeczność 'Zdolnych Operatorów'.",
+            exploreMethodology: "Poznaj Metodologię",
+            linkedinCardTitle: "LinkedIn",
+            linkedinCardText: "Połącz się z Pawłem Jakubowskim, angażuj się w profesjonalne dialogi i bądź na bieżąco z najnowszymi spostrzeżeniami w dziedzinie AI, klarowności i antykruchości.",
+            connectWithPawel: "Połącz się z Pawłem",
+            tradingViewCardTitle: "TradingView",
+            tradingViewCardText: "Laboratorium w świecie rzeczywistym do rozróżniania 'niewidzialnych rytmów' w dynamicznych środowiskach danych. Zastosuj spostrzeżenia Neuro-Sonic w złożonych, bieżących scenariuszach.",
+            exploreTradingView: "Poznaj TradingView",
+            anjunaBeatsCardTitle: "Anjuna Beats Radio",
+            anjunaBeatsCardText: "Stwórz swoje optymalne środowisko dźwiękowe. Wykorzystaj morfodynamikę słuchową, aby zwiększyć skupienie, wywołać stany przepływu i utrzymać głęboką pracę.",
+            tuneIn: "Włącz",
+            quickInsightHeading: "✨ Uzyskaj Szybkie Spostrzeżenie Neuro-Sonic",
+            quickInsightParagraph: "Wprowadź dowolny problem lub pytanie, a nasz silnik AI dostarczy Ci natychmiastowe, ukierunkowane spostrzeżenie Neuro-Sonic, które pomoże Ci uzyskać klarowność.",
+            insightPlaceholder: "Np. 'Jak pokonać prokrastynację w złożonych projektach?'",
+            generateInsight: "Generuj Spostrzeżenie",
+            insightPromptError: "Proszę wprowadzić pytanie, aby wygenerować spostrzeżenie.",
+            insightGenerationFailed: "Generowanie spostrzeżenia nie powiodło się: Brak danych lub nieoczekiwana struktura.",
+            insightGenerationError: "Nie udało się wygenerować spostrzeżenia: ",
+            yourNeuroSonicInsight: "Twoje Spostrzeżenie Neuro-Sonic:",
+            loading: "Ładowanie...",
+            footerRights: "Wszelkie prawa zastrzeżone.",
+            footerPoweredBy: "Zasilane Metodologią Neuro-Sonic",
+            apiPromptPrefix: "Zastosuj metodologię Neuro-Sonic do następującego problemu/pytania, aby dostarczyć krótkie, trafne spostrzeżenie, które pomoże w uzyskaniu klarowności i antykruchości. Skoncentruj się na 'niewidzialnych rytmach' lub 'pytaniach klarowności'. Problem: ",
+          },
+        };
+
+        // Główny komponent aplikacji
+        const App = () => {
+          // Placeholder URLs - PAMIĘTAJ, ABY ZASTĄPIĆ JE SWOIMI RZECZYWISTYMI LINKAMI!
+          const navigatorUrl = "https://your-neurosonic-navigator-app.com"; // Zastąp swoim wdrożonym adresem URL Navigatora
+          const substackUrl = "https://yourneurosonic.substack.com"; // Zastąp swoim adresem URL Substacka
+          const linkedinUrl = "https://www.linkedin.com/in/pawel-jakubowski-your-id"; // Zastąp swoim adresem URL profilu LinkedIn
+          const tradingViewUrl = "https://www.tradingview.com/"; // Link do strony głównej TradingView
+          const anjunaBeatsRadioUrl = "https://www.anjunabeats.com/radio"; // Link do Anjuna Beats Radio
+
+          // Stan dla języka
+          const [language, setLanguage] = useState('en'); // Domyślny język angielski
+          const t = translations[language]; // Funkcja pomocnicza do pobierania tłumaczeń
+
+          // Stan dla generatora szybkich spostrzeżeń
+          const [insightPrompt, setInsightPrompt] = useState('');
+          const [generatedInsight, setGeneratedInsight] = useState('');
+          const [isLoading, setIsLoading] = useState(false);
+          const [error, setError] = useState('');
+
+          // Efekt do czyszczenia wyników, gdy prompt lub język się zmienia
+          useEffect(() => {
+            setGeneratedInsight('');
+            setError('');
+          }, [insightPrompt, language]);
+
+          // Funkcja do wywoływania Gemini API
+          const generateNeuroSonicInsight = async () => {
+            if (!insightPrompt.trim()) {
+              setError(t.insightPromptError);
+              return;
+            }
+
+            setIsLoading(true);
+            setError('');
+            setGeneratedInsight('');
+
+            try {
+              // Przygotowanie historii czatu dla LLM z uwzględnieniem języka
+              let chatHistory = [];
+              chatHistory.push({
+                role: "user",
+                parts: [{ text: `${t.apiPromptPrefix}${insightPrompt}` }]
+              });
+
+              const payload = { contents: chatHistory };
+              const apiKey = ""; // Klucz API zostanie automatycznie dostarczony w środowisku Canvas
+              const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+              const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              });
+
+              if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`${t.insightGenerationError} ${response.status} - ${errorData.error?.message || response.statusText}`);
+              }
+
+              const result = await response.json();
+
+              if (result.candidates && result.candidates.length > 0 &&
+                  result.candidates[0].content && result.candidates[0].content.parts &&
+                  result.candidates[0].content.parts.length > 0) {
+                const text = result.candidates[0].content.parts[0].text;
+                setGeneratedInsight(text);
+              } else {
+                throw new Error(t.insightGenerationFailed);
+              }
+            } catch (err) {
+              console.error('Błąd generowania spostrzeżenia:', err);
+              setError(`${t.insightGenerationError}${err.message}. Spróbuj ponownie.`);
+            } finally {
+              setIsLoading(false);
+            }
+          };
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-gray-900 text-gray-100 font-inter antialiased">
+              {/* Header */}
+              <header className="py-6 px-4 md:px-8 lg:px-16">
+                <div className="max-w-6xl mx-auto flex justify-between items-center">
+                  <h1 className="text-3xl font-extrabold text-white tracking-tight">
+                    <span className="text-purple-400">{t.headerBrand}</span> {t.headerSlogan}
+                  </h1>
+                  {/* Language Switcher */}
+                  <div className="flex items-center space-x-2">
+                    <Globe className="text-gray-300" size={20} />
+                    <button
+                      onClick={() => setLanguage('en')}
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${language === 'en' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+                    >
+                      EN
+                    </button>
+                    <button
+                      onClick={() => setLanguage('pl')}
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${language === 'pl' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+                    >
+                      PL
+                    </button>
+                  </div>
+                </div>
+              </header>
+
+              {/* Hero Section */}
+              <section className="py-16 md:py-24 px-4 md:px-8 lg:px-16 text-center">
+                <div className="max-w-4xl mx-auto">
+                  <h2 className="text-5xl md:text-6xl font-extrabold leading-tight text-white mb-6 drop-shadow-lg">
+                    {t.heroPrefix}
+                    <span className="text-purple-400">{t.heroAbleOperator}</span>
+                    {t.heroSuffix}
+                  </h2>
+                  <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    {t.heroParagraph}
+                  </p>
+                  <a
+                    href="#ecosystem"
+                    className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75"
+                  >
+                    {t.exploreEcosystem}
+                  </a>
+                </div>
+              </section>
+
+              {/* Quick Insight Generator Section */}
+              <section className="py-16 px-4 md:px-8 lg:px-16 bg-gray-800 bg-opacity-60 rounded-xl shadow-xl max-w-4xl mx-auto mb-16">
+                <h3 className="text-4xl font-bold text-center text-white mb-8">
+                  {t.quickInsightHeading}
+                </h3>
+                <p className="text-lg text-gray-300 text-center mb-8">
+                  {t.quickInsightParagraph}
+                </p>
+                <div className="flex flex-col md:flex-row gap-4 mb-6">
+                  <input
+                    type="text"
+                    className="flex-grow p-4 rounded-lg bg-gray-700 bg-opacity-80 border border-purple-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    placeholder={t.insightPlaceholder}
+                    value={insightPrompt}
+                    onChange={(e) => setInsightPrompt(e.target.value)}
+                    onKeyPress={(e) => { if (e.key === 'Enter') generateNeuroSonicInsight(); }}
+                  />
+                  <button
+                    onClick={generateNeuroSonicInsight}
+                    disabled={isLoading}
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isLoading ? (
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    ) : (
+                      <>
+                        <Sparkles size={20} /> {t.generateInsight}
+                      </>
+                    )}
+                  </button>
+                </div>
+                {error && <p className="text-red-400 text-center mb-4">{error}</p>}
+                {generatedInsight && (
+                  <div className="bg-gray-700 bg-opacity-80 p-6 rounded-lg border border-purple-700 text-gray-200 leading-relaxed shadow-inner">
+                    <h4 className="font-semibold text-purple-300 mb-2">{t.yourNeuroSonicInsight}</h4>
+                    <p>{generatedInsight}</p>
+                  </div>
+                )}
+              </section>
+
+              {/* Ecosystem Components Section */}
+              <section id="ecosystem" className="py-16 md:py-24 px-4 md:px-8 lg:px-16 bg-gray-800 bg-opacity-50 rounded-t-3xl shadow-inner">
+                <div className="max-w-6xl mx-auto">
+                  <h3 className="text-4xl font-bold text-center text-white mb-16">
+                    {t.ecosystemHeading}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+
+                    {/* Neuro-Sonic Navigator Card */}
+                    <div className="bg-gray-700 bg-opacity-70 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-purple-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center text-center">
+                      <Brain className="text-purple-400 mb-6" size={64} strokeWidth={1.5} />
+                      <h4 className="text-3xl font-bold text-white mb-4">{t.navigatorCardTitle}</h4>
+                      <p className="text-gray-300 mb-6 flex-grow">
+                        {t.navigatorCardText}
+                      </p>
+                      <a
+                        href={navigatorUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-auto bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-300 shadow-md"
+                      >
+                        {t.tryNavigator}
+                      </a>
+                    </div>
+
+                    {/* Substack Card */}
+                    <div className="bg-gray-700 bg-opacity-70 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-purple-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center text-center">
+                      <BookOpen className="text-purple-400 mb-6" size={64} strokeWidth={1.5} />
+                      <h4 className="text-3xl font-bold text-white mb-4">{t.substackCardTitle}</h4>
+                      <p className="text-gray-300 mb-6 flex-grow">
+                        {t.substackCardText}
+                      </p>
+                      <a
+                        href={substackUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-auto bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-300 shadow-md"
+                      >
+                        {t.exploreMethodology}
+                      </a>
+                    </div>
+
+                    {/* LinkedIn Card */}
+                    <div className="bg-gray-700 bg-opacity-70 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-purple-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center text-center">
+                      <Users className="text-purple-400 mb-6" size={64} strokeWidth={1.5} />
+                      <h4 className="text-3xl font-bold text-white mb-4">{t.linkedinCardTitle}</h4>
+                      <p className="text-gray-300 mb-6 flex-grow">
+                        {t.linkedinCardText}
+                      </p>
+                      <a
+                        href={linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-auto bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-300 shadow-md"
+                      >
+                        {t.connectWithPawel}
+                      </a>
+                    </div>
+
+                    {/* TradingView Card */}
+                    <div className="bg-gray-700 bg-opacity-70 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-purple-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center text-center">
+                      <TrendingUp className="text-purple-400 mb-6" size={64} strokeWidth={1.5} />
+                      <h4 className="text-3xl font-bold text-white mb-4">{t.tradingViewCardTitle}</h4>
+                      <p className="text-gray-300 mb-6 flex-grow">
+                        {t.tradingViewCardText}
+                      </p>
+                      <a
+                        href={tradingViewUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-auto bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-300 shadow-md"
+                      >
+                        {t.exploreTradingView}
+                      </a>
+                    </div>
+
+                    {/* Anjuna Beats Radio Card */}
+                    <div className="bg-gray-700 bg-opacity-70 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-purple-700 transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center text-center">
+                      <Music className="text-purple-400 mb-6" size={64} strokeWidth={1.5} />
+                      <h4 className="text-3xl font-bold text-white mb-4">{t.anjunaBeatsCardTitle}</h4>
+                      <p className="text-gray-300 mb-6 flex-grow">
+                        {t.anjunaBeatsCardText}
+                      </p>
+                      <a
+                        href={anjunaBeatsRadioUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-auto bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-full transition-colors duration-300 shadow-md"
+                      >
+                        {t.tuneIn}
+                      </a>
+                    </div>
+                    {/* Dodaj puste divy, aby wyrównać siatkę, jeśli masz nieparzystą liczbę kart */}
+                    {/* <div className="hidden lg:block"></div> */}
+                    {/* <div className="hidden lg:block"></div> */}
+
+                  </div>
+                </div>
+              </section>
+
+              {/* Footer */}
+              <footer className="py-8 px-4 md:px-8 lg:px-16 text-center text-gray-400 text-sm">
+                <p>&copy; {new Date().getFullYear()} Horus9xSpark. {t.footerRights}</p>
+                <p className="mt-2">{t.footerPoweredBy}</p>
+              </footer>
+            </div>
+          );
+        };
+
+        // Renderowanie komponentu React do elementu 'root'
+        const rootElement = document.getElementById('root');
+        if (rootElement) {
+            // Użyj ReactDOM.createRoot dla React 18+
+            const root = ReactDOM.createRoot(rootElement);
+            root.render(React.createElement(App));
+        } else {
+            console.error("Element główny o ID 'root' nie został znaleziony.");
+        }
+    </script>
+</body>
 </html>
