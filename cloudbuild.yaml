@@ -34,5 +34,6 @@
     # Uwaga: W tym setupie nie potrzebujemy tokena Firebase, ponieważ konto serwisowe Cloud Build
     # (domyślnie: [PROJECT_NUMBER]@cloudbuild.gserviceaccount.com)
     # zostanie automatycznie uwierzytelnione, jeśli ma odpowiednie role w projekcie Firebase.
+    
     options:
       logging: CLOUD_LOGGING_ONLY
