@@ -6,24 +6,25 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  # Krok 0: Usunęliśmy globalną instalację Firebase CLI.
-  # Teraz zainstalujemy firebase-tools jako lokalną zależność w kroku 1.
-
   # Krok 1: Zainstaluj zależności projektu ORAZ firebase-tools lokalnie
-  - name: 'gcr.io/cloud-builders/npm'
-    id: 'Install Project Dependencies and Firebase CLI' # Zmieniona nazwa kroku
-    args: ['install', 'firebase-tools'] # Dodajemy 'firebase-tools' do lokalnych zależności
+  # Zmieniamy obraz na 'node:20', który zawiera Node.js w wersji 20.x
+  - name: 'node:20' # <-- KLUCZOWA ZMIANA: Używamy obrazu Node.js 20
+    id: 'Install Project Dependencies and Firebase CLI'
+    entrypoint: 'npm' # Punkt wejścia dla tego obrazu to 'npm'
+    args: ['install', 'firebase-tools']
 
   # Krok 2: Zbuduj projekt (jeśli jest to aplikacja frontendowa)
-  - name: 'gcr.io/cloud-builders/npm'
+  # Używamy tego samego obrazu Node.js 20
+  - name: 'node:20' # <-- KLUCZOWA ZMIANA: Używamy obrazu Node.js 20
     id: 'Build Project'
+    entrypoint: 'npm' # Punkt wejścia dla tego obrazu to 'npm'
     args: ['run', 'build'] # Zmień 'build' na odpowiednią komendę, np. 'prod'
 
   # Krok 3: Wdróż na Firebase Hosting
-  # Używamy npx, który powinien znaleźć lokalnie zainstalowane firebase-tools.
-  - name: 'gcr.io/cloud-builders/npm' # Nadal używamy obrazu npm
+  # Używamy tego samego obrazu Node.js 20
+  - name: 'node:20' # <-- KLUCZOWA ZMIANA: Używamy obrazu Node.js 20
     id: 'Deploy to Firebase Hosting'
-    entrypoint: 'npx' # <-- KLUCZOWA ZMIANA: Używamy 'npx'
+    entrypoint: 'npx' # Punkt wejścia dla tego obrazu to 'npx'
     args:
       - 'firebase' # Komenda, którą npx ma uruchomić
       - 'deploy'
