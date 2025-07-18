@@ -171,12 +171,12 @@
 
         // Główny komponent aplikacji
         const App = () => {
-          // Placeholder URLs - PAMIĘTAJ, ABY ZASTĄPIĆ JE SWOIMI RZECZYWISTYMI LINKAMI!
-          const navigatorUrl = "https://your-neurosonic-navigator-app.com"; // Zastąp swoim wdrożonym adresem URL Navigatora
-          const substackUrl = "https://yourneurosonic.substack.com"; // Zastąp swoim adresem URL Substacka
-          const linkedinUrl = "https://www.linkedin.com/in/pawel-jakubowski-your-id"; // Zastąp swoim adresem URL profilu LinkedIn
-          const tradingViewUrl = "https://www.tradingview.com/"; // Link do strony głównej TradingView
-          const anjunaBeatsRadioUrl = "https://www.anjunabeats.com/radio"; // Link do Anjuna Beats Radio
+          // Zaktualizowane adresy URL
+          const substackUrl = "https://peel3r.substack.com/";
+          const navigatorUrl = "https://neurosonicgrail.lm.r.appspot.com/";
+          const linkedinUrl = "https://www.linkedin.com/in/paweljakubowski/";
+          const tradingViewUrl = "https://www.tradingview.com/u/SimonTheBeeKeeper/";
+          const anjunaBeatsRadioUrl = "https://www.youtube.com/watch?v=IvuwTft-0cM";
 
           // Stan dla języka
           const [language, setLanguage] = useState('en'); // Domyślny język angielski
@@ -214,6 +214,7 @@
               });
 
               const payload = { contents: chatHistory };
+              // TUTAJ WKLEJ SWÓJ KLUCZ API!
               const apiKey = "AIzaSyAgaqUCB4G_R4wwGq3Vs_kAT4Inlnacfp0"; // Klucz API zostanie automatycznie dostarczony w środowisku Canvas
               const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
