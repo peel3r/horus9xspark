@@ -23,19 +23,21 @@ steps:
     args: ['run', 'build'] # Zmień 'build' na odpowiednią komendę, np. 'prod'
 
   # Krok 3: Wdróż na Firebase Hosting
-  # Używamy bash, aby wykonać komendę firebase.
+  # Używamy bash, aby najpierw znaleźć globalną ścieżkę bin npm, a następnie użyć jej do uruchomienia firebase.
   - name: 'gcr.io/cloud-builders/npm' # Nadal używamy obrazu npm
     id: 'Deploy to Firebase Hosting'
-    entrypoint: 'bash' # <-- KLUCZOWA ZMIANA: Używamy 'bash' jako punktu wejścia
+    entrypoint: 'bash' # Używamy 'bash' jako punktu wejścia
     args:
       - '-c' # Argument dla bash, aby wykonać następny argument jako komendę
-      - 'firebase deploy --only hosting --project $PROJECT_ID' # <-- KLUCZOWA ZMIANA: Cała komenda jako jeden string
+      # Używamy $(npm bin -g) aby dynamicznie znaleźć ścieżkę do globalnych binariów npm,
+      # a następnie łączymy ją z komendą firebase.
+      - '$(npm bin -g)/firebase deploy --only hosting --project $PROJECT_ID' # <-- KLUCZOWA ZMIANA
     # Jeśli masz wiele projektów Firebase lub niestandardową konfigurację,
     # możesz potrzebować `--project=your-firebase-project-id` zamiast `$PROJECT_ID`.
     # Jeśli używasz wielu celów hostingowych:
     # args:
     #   - '-c'
-    #   - 'firebase deploy --only hosting:your-hosting-target --project $PROJECT_ID'
+    #   - '$(npm bin -g)/firebase deploy --only hosting:your-hosting-target --project $PROJECT_ID'
 
 # Opcjonalnie: Zapisz artefakty (np. zbudowane pliki) do Cloud Storage
 # artifacts:
