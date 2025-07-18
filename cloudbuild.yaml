@@ -2,30 +2,21 @@
 # Jest używany do automatycznego budowania i wdrażania aplikacji Firebase.
 
 # Określamy, że logi z tej kompilacji mają być wysyłane tylko do Cloud Logging.
-# To rozwiązuje błąd "if 'build.service_account' is specified, the build must either (a) specify 'build.logs_bucket', (b) use the REGIONAL_USER_OWNED_BUCKET build.options.default_logs_bucket_behavior option, or (c) use either CLOUD_LOGGING_ONLY / NONE logging options: invalid argument"
 options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
   # Krok 1: Zainstaluj zależności Firebase CLI
-  # Używamy obrazu gcr.io/cloud-builders/npm, aby zainstalować Firebase CLI globalnie.
-  # To jest potrzebne do wykonania komend Firebase.
   - name: 'gcr.io/cloud-builders/npm'
     id: 'Install Firebase CLI'
     args: ['install', '-g', 'firebase-tools']
 
   # Krok 2: Zainstaluj zależności projektu (jeśli masz plik package.json)
-  # Jeśli Twój projekt ma zależności Node.js (np. React, Angular, Vue),
-  # ten krok zainstaluje je. Jeśli nie masz package.json, możesz pominąć ten krok.
-  # Możesz także zmienić 'npm install' na 'yarn install' jeśli używasz Yarna.
   - name: 'gcr.io/cloud-builders/npm'
     id: 'Install Project Dependencies'
     args: ['install']
 
   # Krok 3: Zbuduj projekt (jeśli jest to aplikacja frontendowa)
-  # Jeśli Twoja aplikacja wymaga kompilacji (np. 'npm run build' dla React/Angular/Vue),
-  # ten krok wykona tę komendę. Zastąp 'build' odpowiednią komendą z Twojego package.json.
-  # Jeśli Twój projekt to tylko statyczne pliki, możesz pominąć ten krok.
   - name: 'gcr.io/cloud-builders/npm'
     id: 'Build Project'
     args: ['run', 'build'] # Zmień 'build' na odpowiednią komendę, np. 'prod'
@@ -35,8 +26,9 @@ steps:
   # --project=$PROJECT_ID automatycznie pobiera ID projektu Cloud Build.
   # --token=$FIREBASE_TOKEN jest opcjonalny, jeśli używasz Service Account.
   # Jeśli masz wiele celów hostingowych, możesz dodać --only hosting:your-target-name
-  - name: 'gcr.io/cloud-builders/npm' # Ponownie używamy npm, bo firebase-tools jest zainstalowany globalnie
+  - name: 'gcr.io/cloud-builders/npm' # Nadal używamy obrazu npm, ponieważ to w nim zainstalowaliśmy firebase-tools
     id: 'Deploy to Firebase Hosting'
+    entrypoint: 'firebase' # <-- KLUCZOWA ZMIANA: Używamy 'firebase' jako punktu wejścia
     args: ['deploy', '--only', 'hosting', '--project', '$PROJECT_ID']
     # Jeśli masz wiele projektów Firebase lub niestandardową konfigurację,
     # możesz potrzebować `--project=your-firebase-project-id` zamiast `$PROJECT_ID`.
@@ -44,8 +36,7 @@ steps:
     # args: ['deploy', '--only', 'hosting:your-hosting-target', '--project', '$PROJECT_ID']
 
 # Opcjonalnie: Zapisz artefakty (np. zbudowane pliki) do Cloud Storage
-# Jeśli chcesz zachować zbudowane pliki po kompilacji, możesz je zarchiwizować.
 # artifacts:
 #   objects:
 #     location: 'gs://your-artifact-bucket/builds/$BUILD_ID'
-#     paths: ['build/**'] # Zmień na ścieżkę do Twoich zbudowanych plików
+#     paths: ['build/**']
