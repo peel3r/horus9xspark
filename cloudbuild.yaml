@@ -6,16 +6,13 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 steps:
-  # Krok 0: Zainstaluj zależności Firebase CLI
-  # Nadal instalujemy firebase-tools globalnie.
-  - name: 'gcr.io/cloud-builders/npm'
-    id: 'Install Firebase CLI'
-    args: ['install', '-g', 'firebase-tools']
+  # Krok 0: Usunęliśmy globalną instalację Firebase CLI.
+  # Teraz zainstalujemy firebase-tools jako lokalną zależność w kroku 1.
 
-  # Krok 1: Zainstaluj zależności projektu (jeśli masz plik package.json)
+  # Krok 1: Zainstaluj zależności projektu ORAZ firebase-tools lokalnie
   - name: 'gcr.io/cloud-builders/npm'
-    id: 'Install Project Dependencies'
-    args: ['install']
+    id: 'Install Project Dependencies and Firebase CLI' # Zmieniona nazwa kroku
+    args: ['install', 'firebase-tools'] # Dodajemy 'firebase-tools' do lokalnych zależności
 
   # Krok 2: Zbuduj projekt (jeśli jest to aplikacja frontendowa)
   - name: 'gcr.io/cloud-builders/npm'
@@ -23,21 +20,27 @@ steps:
     args: ['run', 'build'] # Zmień 'build' na odpowiednią komendę, np. 'prod'
 
   # Krok 3: Wdróż na Firebase Hosting
-  # Używamy bash, aby najpierw znaleźć globalną ścieżkę bin npm, a następnie użyć jej do uruchomienia firebase.
+  # Używamy npx, który powinien znaleźć lokalnie zainstalowane firebase-tools.
   - name: 'gcr.io/cloud-builders/npm' # Nadal używamy obrazu npm
     id: 'Deploy to Firebase Hosting'
-    entrypoint: 'bash' # Używamy 'bash' jako punktu wejścia
+    entrypoint: 'npx' # <-- KLUCZOWA ZMIANA: Używamy 'npx'
     args:
-      - '-c' # Argument dla bash, aby wykonać następny argument jako komendę
-      # Używamy $(npm bin -g) aby dynamicznie znaleźć ścieżkę do globalnych binariów npm,
-      # a następnie łączymy ją z komendą firebase.
-      - '$(npm bin -g)/firebase deploy --only hosting --project $PROJECT_ID' # <-- KLUCZOWA ZMIANA
+      - 'firebase' # Komenda, którą npx ma uruchomić
+      - 'deploy'
+      - '--only'
+      - 'hosting'
+      - '--project'
+      - '$PROJECT_ID' # Zmienna środowiskowa Cloud Build dla ID projektu
     # Jeśli masz wiele projektów Firebase lub niestandardową konfigurację,
     # możesz potrzebować `--project=your-firebase-project-id` zamiast `$PROJECT_ID`.
     # Jeśli używasz wielu celów hostingowych:
     # args:
-    #   - '-c'
-    #   - '$(npm bin -g)/firebase deploy --only hosting:your-hosting-target --project $PROJECT_ID'
+    #   - 'firebase'
+    #   - 'deploy'
+    #   - '--only'
+    #   - 'hosting:your-hosting-target'
+    #   - '--project'
+    #   - '$PROJECT_ID'
 
 # Opcjonalnie: Zapisz artefakty (np. zbudowane pliki) do Cloud Storage
 # artifacts:
